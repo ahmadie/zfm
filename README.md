@@ -12,6 +12,10 @@ Pressing `ctrl+b` will open an fzf fuzzy selection menu and execute selected com
 
 Pressing `ctrl+o` will also display save commands
 
+Alternatively, you can type `fx` followed by a pattern to excute commands
+
+`fx 'tar from'` use quotes to fuzzy match multiple words
+
 ### Options
 
 | Option       | Description               | Available for                 |
@@ -25,7 +29,7 @@ Pressing `ctrl+o` will also display save commands
 | `ctrl+o`    | Select one or multiple bookmarks/commands and insert them into the current command line |
 | `ctrl+b`    | Execute selected command                                                                |
 
-# Commands
+### Commands
 
 | Command   | Description                                                                            |
 | --------- | -------------------------------------------------------------------------------------- |
