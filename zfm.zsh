@@ -2,7 +2,7 @@ function __zfm_select_bookmarks()
 {
     setopt localoptions pipefail no_aliases 2> /dev/null
     local opts="--reverse --exact --no-sort --cycle --height ${FZF_TMUX_HEIGHT:-40%} $FZF_DEFAULT_OPTS"
-    __zfm_decorate | FZF_DEFAULT_OPTS="$@ ${opts}" fzf | awk '{ print $1 }'
+    __zfm_decorate | FZF_DEFAULT_OPTS="$@ ${opts}" fzf | awk '{ $NF=""; print $0 }'
 }
 
 function __zfm_select_with_query()
@@ -32,27 +32,40 @@ function __zfm_filter_dirs()
     done
 }
 
+function __zfm_filter_commands()
+{
+    while read line
+    do
+        if [[ ! -d $line ]] && [[ ! -e $line ]]; then
+            echo $line
+        fi
+    done
+}
+
+
 function __zfm_decorate()
 {
     while read line
     do
         if [ ! -z "$line" ];then
             if [ -d "$line" ]; then
-                echo "$line" "[d]"
+                echo "$line"@"[d]"
             elif [ -f "$line" ]; then
-                echo "$line" "[f]"
+                echo "$line"@"[f]"
+            else
+                echo "$line"@"[c]" 
             fi
         fi
-    done | column -t
+    done | column -t -s '@'
 }
 
 function __zfm_filter_non_existent()
 {
     while read line
     do
-        if [[ -d $line ]] || [[ -e $line ]]; then
+        # if [[ -d $line ]] || [[ -e $line ]]; then
             echo $line
-        fi
+        # fi
     done
 }
 
@@ -82,6 +95,14 @@ function __zfm_add_items_to_file()
         echo "$item" >> "$1"
         echo "$item" added!
     done
+    local contents=$(cat "$1")
+    echo "$contents" | awk '!a[$0]++' > "$1"
+}
+
+function __zfm_add_command_to_file()
+{
+    echo "${@:2}" >> "$1"
+    echo "$item" added!
     local contents=$(cat "$1")
     echo "$contents" | awk '!a[$0]++' > "$1"
 }
@@ -118,6 +139,7 @@ Default Keybindings:
 
 Ctrl+P                                  Select a bookmarked directory and jump to it
 Ctrl+O                                  Select one or multiple bookmarks and insert them into the current command line
+Ctrl+B                                  Select one or multiple commands and insert them into the current command line
 "
 
 function zfm()
@@ -128,28 +150,35 @@ function zfm()
     fi
     case "$1" in
         'list')
-            __zfm_check_regex "$1" '(--files|--dirs)' "${@:2}" || return 1
+            __zfm_check_regex "$1" '(--files|--dirs|--commands)' "${@:2}" || return 1
             if [[ $* == *--files* ]]; then
                 cat "$bookmarks_file" | __zfm_filter_files | __zfm_decorate
             elif [[ $* == *--dirs* ]]; then
                 cat "$bookmarks_file" | __zfm_filter_dirs | __zfm_decorate
+            elif [[ $* == *--commands* ]]; then
+                cat "$bookmarks_file" | __zfm_filter_commands | __zfm_decorate
             else
                 cat "$bookmarks_file" | __zfm_decorate
             fi
             ;;
         'select')
-            __zfm_check_regex "$1" '(--multi|--files|--dirs)' "${@:2}" || return 1
+            __zfm_check_regex "$1" '(--multi|--files|--dirs|--commands)' "${@:2}" || return 1
             [[ $* == *--multi* ]] && local multi="-m"
             if [[ $* == *--files* ]]; then
                 cat "$bookmarks_file" | __zfm_filter_files | __zfm_select_bookmarks "${multi}"
             elif [[ $* == *--dirs* ]]; then
                 cat "$bookmarks_file" | __zfm_filter_dirs | __zfm_select_bookmarks "${multi}"
+            elif [[ $* == *--commands* ]]; then
+                cat "$bookmarks_file" | __zfm_filter_commands | __zfm_select_bookmarks "${multi}"
             else
                 cat "$bookmarks_file" | __zfm_select_bookmarks "${multi}"
             fi
             ;;
         'add')
             __zfm_add_items_to_file "$bookmarks_file" "${@:2}" || return 1
+            ;;
+        'addc')
+            __zfm_add_command_to_file "$bookmarks_file" "${@:2}" || return 1
             ;;
         'query')
             if [[ "$2" == "--files" ]]; then
@@ -181,7 +210,27 @@ function zfm()
 }
 
 #######################################################################
-# CTRL-B - insert bookmark
+# CTRL-B - insert command
+function __zfm_append_command_to_prompt()
+{
+    if [[ -z "$1" ]]; then
+        zle fzf-redraw-prompt
+        return 0
+    fi
+    LBUFFER="${LBUFFER}$(echo "$1" | tr '\r\n' ' '| sed -e 's/\s$//')"
+    local ret=$?
+    zle fzf-redraw-prompt
+    return $ret
+}
+function zfm-insert-command
+{
+    __zfm_append_command_to_prompt "$(zfm select --commands)"
+}
+zle     -N    zfm-insert-command
+bindkey '^B' zfm-insert-command
+
+#######################################################################
+# CTRL-O - insert bookmark
 function __zfm_append_to_prompt()
 {
     if [[ -z "$1" ]]; then

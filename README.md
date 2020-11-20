@@ -1,3 +1,34 @@
+# Forked zfm - Zsh Fuzzy Marks
+
+### Bookmark a command
+
+```sh
+$ zfm addc tar -czvf /from /to
+```
+
+### Select a command
+
+Pressing `ctrl+b` will open an fzf fuzzy selection menu and insert your selection(s) into the current command line
+
+### Options
+
+| Option       | Description               | Available for                 |
+| ------------ | ------------------------- | ----------------------------- |
+| `--commands` | Restrict to just commands | `~~query~~`, `list`, `select` |
+
+### Key Bindings
+
+| Key Binding | Description                                                                             |
+| ----------- | --------------------------------------------------------------------------------------- |
+| `ctrl+o`    | Select one or multiple bookmarks/commands and insert them into the current command line |
+| `ctrl+b`    | Select one command and insert it into the current command line                          |
+
+# Commands
+
+| Command   | Description                                                                            |
+| --------- | -------------------------------------------------------------------------------------- |
+| `zfm fix` | ~~Remove bookmarked entries that no longer exist in the filesystem~~ no longer exists! |
+
 # zfm - Zsh Fuzzy Marks
 
 zfm is a minimal command line bookmark manager for zsh built on top of [fzf](https://github.com/junegunn/fzf).
@@ -71,12 +102,14 @@ restrict to just files:
 $ zfm list --files
 /home/pablo/Documents/wallpaper.png  [f]
 ```
+
 or directories:
 
 ```sh
 $ zfm list --dirs
 /home/pablo/Downloads  [d]
 ```
+
 ### Select Bookmarks
 
 Pressing `ctrl+o` will open an fzf fuzzy selection menu and insert your selection(s) into the current command line:
@@ -99,6 +132,7 @@ Alternatively, you can type `f` followed by a pattern to directly jump to the di
 $ f down
 /home/pablo/Downloads$
 ```
+
 If the pattern is ambiguous a selection menu will be opened with the possible options.
 
 ### Use in custom scripts
@@ -108,6 +142,7 @@ For example, you can create an alias to open a bookmarked file with vim by addin
 ```sh
 alias of='vim $(zfm select --files --multi)'
 ```
+
 Typing `of` will open a selection menu with all bookmarked files and directly open the selection in vim.
 
 The option `--multi` allows you to select multiple entries.
@@ -125,31 +160,31 @@ This will open your current text editor (as defined by `EDITOR`) and let you man
 
 # Commands
 
-| Command | Description |
-| --- | --- |
-| `zfm list` | List bookmarks |
-| `zfm add <path> [<path>...]` | Add a bookmark |
-| `zfm select` | Open selection menu and print selection to stdout |
-| `zfm query <pattern>` | Print bookmark matching `pattern` to stdout. Selection menu will open if match is ambiguous |
-| `zfm edit` | Open and edit the bookmarks file |
-| `zfm fix` | Remove bookmarked entries that no longer exist in the filesystem |
-| `zfm clear` | Remove all bookmarks |
-| `f <pattern>` | Jump to bookmark directory matching `pattern`, open selection if ambiguous  |
+| Command                      | Description                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------- |
+| `zfm list`                   | List bookmarks                                                                              |
+| `zfm add <path> [<path>...]` | Add a bookmark                                                                              |
+| `zfm select`                 | Open selection menu and print selection to stdout                                           |
+| `zfm query <pattern>`        | Print bookmark matching `pattern` to stdout. Selection menu will open if match is ambiguous |
+| `zfm edit`                   | Open and edit the bookmarks file                                                            |
+| `zfm fix`                    | Remove bookmarked entries that no longer exist in the filesystem                            |
+| `zfm clear`                  | Remove all bookmarks                                                                        |
+| `f <pattern>`                | Jump to bookmark directory matching `pattern`, open selection if ambiguous                  |
 
 # Options
 
-| Option | Description | Available for |
-| --- | --- | --- |
-| `--files` | Restrict to just files | `query`, `list`, `select` |
-| `--dirs` | Restrict to just dirs | `query`, `list`, `select` |
-| `--multi` | Allow selecting multiple items | `select` |
+| Option    | Description                    | Available for             |
+| --------- | ------------------------------ | ------------------------- |
+| `--files` | Restrict to just files         | `query`, `list`, `select` |
+| `--dirs`  | Restrict to just dirs          | `query`, `list`, `select` |
+| `--multi` | Allow selecting multiple items | `select`                  |
 
 # Key Bindings
 
-| Key Binding | Description |
-| --- | --- |
-| `ctrl+o` | Select one or multiple bookmarks and insert them into the current command line |
-| `ctrl+p` | jump to selected directory               |
+| Key Binding | Description                                                                    |
+| ----------- | ------------------------------------------------------------------------------ |
+| `ctrl+o`    | Select one or multiple bookmarks and insert them into the current command line |
+| `ctrl+p`    | jump to selected directory                                                     |
 
 # F.A.Q
 
@@ -165,6 +200,7 @@ Sure, you can unbind them by putting this on your `zshrc`:
 bindkey -r '^P'
 bindkey -r '^O'
 ```
+
 Or change them to something else:
 
 ```
@@ -173,4 +209,5 @@ bindkey -r '^O'
 bindkey '^A' zfm-cd-to-bookmark
 bindkey '^E' zfm-insert-bookmark
 ```
-*Tip:* you can use `Ctrl+v` on your terminal window to display escape sequences of key bindings.
+
+_Tip:_ you can use `Ctrl+v` on your terminal window to display escape sequences of key bindings.
