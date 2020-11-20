@@ -20,7 +20,7 @@ Alternatively, you can type `fx` followed by a pattern to excute commands
 
 | Option       | Description               | Available for                 |
 | ------------ | ------------------------- | ----------------------------- |
-| `--commands` | Restrict to just commands | `~~query~~`, `list`, `select` |
+| `--commands` | Restrict to just commands | `query`, `list`, `select` |
 
 ### Key Bindings
 
