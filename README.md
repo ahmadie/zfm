@@ -8,7 +8,9 @@ $ zfm addc tar -czvf /from /to
 
 ### Select a command
 
-Pressing `ctrl+b` will open an fzf fuzzy selection menu and insert your selection(s) into the current command line
+Pressing `ctrl+b` will open an fzf fuzzy selection menu and execute selected command
+
+Pressing `ctrl+o` will also display save commands
 
 ### Options
 
@@ -21,7 +23,7 @@ Pressing `ctrl+b` will open an fzf fuzzy selection menu and insert your selectio
 | Key Binding | Description                                                                             |
 | ----------- | --------------------------------------------------------------------------------------- |
 | `ctrl+o`    | Select one or multiple bookmarks/commands and insert them into the current command line |
-| `ctrl+b`    | Select one command and insert it into the current command line                          |
+| `ctrl+b`    | Execute selected command                                                                |
 
 # Commands
 
